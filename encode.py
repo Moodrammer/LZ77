@@ -7,30 +7,7 @@ import numpy as np
 from numpy import save
 import cv2
 
-imageFilePath = input("Enter the image file path without quotes: ")
-SlidingWindowSize = int(input("Enter the Sliding window size: "))
-lookAheadBufferSize = int(input("Enter the lookAheadBuffer size: "))
-SearchBufferSize = SlidingWindowSize - lookAheadBufferSize
-
-# Selecting the mode of saving the encoded image either in one or two files according to the sliding window
-singlefileMode = 0
-if SlidingWindowSize < 256:
-    singlefileMode = 1
-
-originalImage = np.array(cv2.imread(imageFilePath, 0), dtype=np.uint8)
-numberOfRows = originalImage.shape[0]
-numberOfColumns = originalImage.shape[1]
-
-flattenedImage = np.reshape(originalImage, (1, originalImage.size))
-print(flattenedImage)
-
-# For single file mode
-encodedImage = []
-# For two files mode
-encodedImagecodes = []
-encodedImageoffsets = []
-
-def encode():
+def encode(flattenedImage, SearchBufferSize, lookAheadBufferSize, singlefileMode):
     currentCursorPosition = 0
     SearchBufferCurrentIndex = 0
     SearchBufferStartIndex = 0
@@ -38,6 +15,11 @@ def encode():
     LookAheadBufferEndIndex = 0
     temporaryMatchingOffset = 0
     temporaryMatchingLength = 0
+    # For single file mode
+    encodedImage = []
+    # For two files mode
+    encodedImagecodes = []
+    encodedImageoffsets = []
 
     while currentCursorPosition < flattenedImage.size:
         # adjust the sliding window around the current cursor position
@@ -92,16 +74,14 @@ def encode():
         currentCursorPosition += (finalMatchingLength + 1)
 
 
-encode()
-
-if singlefileMode == 1:
-    encodedImageArray = np.array(encodedImage, dtype=np.uint8)
-    save("encoded", encodedImageArray)
-else:
-    encodedImagecodesArray = np.array(encodedImagecodes, dtype=np.uint8)
-    encodedImageoffsetsArray = np.array(encodedImageoffsets, dtype=np.uint16)
-    save("encodedcodes", encodedImagecodesArray)
-    save("encodedoffsets", encodedImageoffsetsArray)
+    if singlefileMode == 1:
+        encodedImageArray = np.array(encodedImage, dtype=np.uint8)
+        save("encoded", encodedImageArray)
+    else:
+        encodedImagecodesArray = np.array(encodedImagecodes, dtype=np.uint8)
+        encodedImageoffsetsArray = np.array(encodedImageoffsets, dtype=np.uint16)
+        save("encodedcodes", encodedImagecodesArray)
+        save("encodedoffsets", encodedImageoffsetsArray)
 # print(encodedImageArray.shape)
 # for i in range(encodedImageArray.shape[0]):
 #     print(encodedImageArray[i])
