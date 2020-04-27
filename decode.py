@@ -1,18 +1,35 @@
-from encode import numberOfRows,numberOfColumns
+# ............................
+# Date: 27/4/2020
+# author: Mahmoud Amr Mohamed
+# ............................
+
+from encode import numberOfRows,numberOfColumns,singlefileMode
 from numpy import load
 import cv2
 import numpy as np
 
-encodedFlattenedImage = load("encoded.npy")
+if singlefileMode == 1:
+    encodedFlattenedImage = load("encoded.npy")
+    numberOfTriplets = encodedFlattenedImage.shape[0]
+else:
+    encodedcodes = load("encodedcodes.npy")
+    encodedoffsets = load("encodedoffsets.npy")
+    numberOfTriplets = encodedoffsets.shape[0]
 
 decodedflattenedImage = []
 currentCursorPosition = 0
 currentCode = 0
 
-for tripletIndex in range(encodedFlattenedImage.shape[0]):
-    offset = encodedFlattenedImage[tripletIndex][0]
-    matchingLength = encodedFlattenedImage[tripletIndex][1]
-    code = encodedFlattenedImage[tripletIndex][2]
+
+for tripletIndex in range(numberOfTriplets):
+    if singlefileMode == 1:
+        offset = encodedFlattenedImage[tripletIndex][0]
+        matchingLength = encodedFlattenedImage[tripletIndex][1]
+        code = encodedFlattenedImage[tripletIndex][2]
+    else:
+        offset = encodedoffsets[tripletIndex][0]
+        matchingLength = encodedoffsets[tripletIndex][1]
+        code = encodedcodes[tripletIndex]
 
     while offset != 0:
         currentCursorPosition -= 1
@@ -30,13 +47,11 @@ for tripletIndex in range(encodedFlattenedImage.shape[0]):
     # print(currentCursorPosition)
 
 decodedflattenedImage = np.array(decodedflattenedImage)
-print(decodedflattenedImage)
 # In encoding we add an extra character if the final lookahead buffer matches completely
 originalImageSize = numberOfRows * numberOfColumns
 if decodedflattenedImage.size > originalImageSize:
     # discard the last element
     decodedflattenedImage = decodedflattenedImage[0: originalImageSize]
-print(decodedflattenedImage)
 decodedImage = decodedflattenedImage.reshape((numberOfRows, numberOfColumns))
 print(decodedImage)
 
