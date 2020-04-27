@@ -35,4 +35,5 @@ encode.encode(flattenedImage, SearchBufferSize, lookAheadBufferSize, singlefileM
 # decoding
 print("3. decoding ..")
 decode.decode(numberOfRows,numberOfColumns, singlefileMode, file_ext)
+print("DecodedImage file was generated in the project directory")
 
