@@ -5,7 +5,7 @@
 
 import numpy as np
 from numpy import save
-import cv2
+
 
 def encode(flattenedImage, SearchBufferSize, lookAheadBufferSize, singlefileMode):
     currentCursorPosition = 0
@@ -51,6 +51,8 @@ def encode(flattenedImage, SearchBufferSize, lookAheadBufferSize, singlefileMode
                     else:
                         break
 
+                # return the searchBufferCurrentIndex to the begining of the current found match to continue searching
+                # from that point for longer matches
                 SearchBufferCurrentIndex = (currentCursorPosition - 1) - temporaryMatchingOffset
                 LookAheadBufferCurrentIndex = currentCursorPosition
 
@@ -60,7 +62,7 @@ def encode(flattenedImage, SearchBufferSize, lookAheadBufferSize, singlefileMode
 
             SearchBufferCurrentIndex -= 1
 
-        # Store the current sliding window triplet
+        # Store the current sliding window triplet (longest match found)
         nextCharacterCodeIndex = currentCursorPosition + finalMatchingLength
         if nextCharacterCodeIndex >= flattenedImage.size:
             nextCharacterCodeIndex = flattenedImage.size - 1
@@ -82,9 +84,6 @@ def encode(flattenedImage, SearchBufferSize, lookAheadBufferSize, singlefileMode
         encodedImageoffsetsArray = np.array(encodedImageoffsets, dtype=np.uint16)
         save("encodedcodes", encodedImagecodesArray)
         save("encodedoffsets", encodedImageoffsetsArray)
-# print(encodedImageArray.shape)
-# for i in range(encodedImageArray.shape[0]):
-#     print(encodedImageArray[i])
 
 
 

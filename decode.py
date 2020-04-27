@@ -7,7 +7,8 @@ from numpy import load
 import cv2
 import numpy as np
 
-def decode(numberOfRows, numberOfColumns, singlefileMode):
+
+def decode(numberOfRows, numberOfColumns, singlefileMode, file_ext):
     if singlefileMode == 1:
         encodedFlattenedImage = load("encoded.npy")
         numberOfTriplets = encodedFlattenedImage.shape[0]
@@ -48,16 +49,13 @@ def decode(numberOfRows, numberOfColumns, singlefileMode):
 
     decodedflattenedImage = np.array(decodedflattenedImage)
     # In encoding we add an extra character if the final lookahead buffer matches completely
+    # to handle the case when we match till the last element in the flattened image and there is no extra code after the
+    # matching string to add
     originalImageSize = numberOfRows * numberOfColumns
     if decodedflattenedImage.size > originalImageSize:
         # discard the last element
         decodedflattenedImage = decodedflattenedImage[0: originalImageSize]
     decodedImage = decodedflattenedImage.reshape((numberOfRows, numberOfColumns))
-    print(decodedImage)
 
-    cv2.imwrite("DecodedImage.jpg", decodedImage)
-
-    cv2.imshow("decoded", decodedImage)
-    cv2.waitKey(0)
-    cv2.destroyAllWindows()
+    cv2.imwrite("DecodedImage" + file_ext, decodedImage)
 

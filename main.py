@@ -3,11 +3,14 @@
 # author: Mahmoud Amr Mohamed
 # ............................
 import cv2
+import os
 import numpy as np
 import encode
 import decode
 
 imageFilePath = input("Enter the image file path without quotes: ")
+file_name, file_ext = os.path.splitext(imageFilePath)
+
 SlidingWindowSize = int(input("Enter the Sliding window size: "))
 lookAheadBufferSize = int(input("Enter the lookAheadBuffer size: "))
 SearchBufferSize = SlidingWindowSize - lookAheadBufferSize
@@ -31,5 +34,5 @@ encode.encode(flattenedImage, SearchBufferSize, lookAheadBufferSize, singlefileM
 
 # decoding
 print("3. decoding ..")
-decode.decode(numberOfRows,numberOfColumns, singlefileMode)
+decode.decode(numberOfRows,numberOfColumns, singlefileMode, file_ext)
 
